@@ -1,7 +1,21 @@
 <html>
     <head>
         <script src="https://cdn.apple-cloudkit.com/ck/2/cloudkit.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.0/knockout-min.js"></script>
         <script src="FoodLog.js"></script>
     </head>
-
+    <body>
+        <h5 data-bind="text: displayUserName"></h5>
+        <div id="apple-sign-in-button"></div>
+        <div id="apple-sign-out-button"></div>
+        
+        <div data-bind="foreach: categories">
+            <div class="row">
+                <div class="three columns">
+                    <h5><span data-bind="text: fields.name.value"></span></h5>
+                </div>
+                
+            </div>
+        </div>
+    </body>
 </html>
