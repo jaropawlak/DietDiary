@@ -1,5 +1,6 @@
 <html>
     <head>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
         <script src="https://cdn.apple-cloudkit.com/ck/2/cloudkit.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.0/knockout-min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
@@ -18,15 +19,16 @@
                 
             </div>
         </div>
-        <div data-bind="foreach: items">
-            <div class="row">
-                <div>
-                    <span data-bind="text: moment(fields.date.value)"></span>
-                    <span data-bind="text: fields.text.value"></span>
-                    <span data-bind="text: fields.categoryName"></span>
+        <div class="row">
+            <div class="col-sm-2">Date</div><div class="col-sm-5">Text</div><div class="col-sm-5">Category</div>
+        </div>
+        <div data-bind="foreach: items" class="row">
+            
+                    <div class="col-sm-2" data-bind="text: moment(fields.date.value)"></div>
+                    <div class="col-sm-5" data-bind="text: fields.text.value"></div>
+                    <div class="col-sm-5" data-bind="text: fields.categoryName"></div>
                     
-                </div>
-            </div>
+                
         </div>
         
     </body>
