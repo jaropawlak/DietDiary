@@ -2,6 +2,7 @@
     <head>
         <script src="https://cdn.apple-cloudkit.com/ck/2/cloudkit.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.0/knockout-min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
         <script src="FoodLog.js"></script>
     </head>
     <body>
@@ -17,5 +18,16 @@
                 
             </div>
         </div>
+        <div data-bind="foreach: items">
+            <div class="row">
+                <div>
+                    <span data-bind="text: moment(fields.date.value)"></span>
+                    <span data-bind="text: fields.text.value"></span>
+                    <span data-bind="text: fields.categoryName"></span>
+                    
+                </div>
+            </div>
+        </div>
+        
     </body>
 </html>
