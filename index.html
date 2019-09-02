@@ -1,16 +1,32 @@
 <html>
     <head>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-        <script src="https://cdn.apple-cloudkit.com/ck/2/cloudkit.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.0/knockout-min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" >
+        <script   src="https://code.jquery.com/jquery-3.4.1.slim.min.js"   integrity="sha256-pasqAKBDmFT4eHoN2ndd6lN370kFiGUFyTiUHWhU7k8="   crossorigin="anonymous"></script>
+        <script   src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"   integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="   crossorigin="anonymous"></script>
+
+        <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+
         <script src="FoodLog.js"></script>
+        <script src="https://cdn.apple-cloudkit.com/ck/2/cloudkit.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+        
     </head>
     <body>
-        <h5 data-bind="text: displayUserName"></h5>
+       
         <div id="apple-sign-in-button"></div>
         <div id="apple-sign-out-button"></div>
+       
+        <div id="ForLoggedIn">
+            <div id="categoryList">
+                
+            </div>
+
+
+        </div>
         
+
         <div data-bind="foreach: categories">
             <div class="row">
                 <div class="three columns">
@@ -19,17 +35,22 @@
                 
             </div>
         </div>
-        <div class="row">
-            <div class="col-sm-2">Date</div><div class="col-sm-5">Text</div><div class="col-sm-5">Category</div>
-        </div>
-        <div data-bind="foreach: items" class="row">
-            
-                    <div class="col-sm-2" data-bind="text: moment(fields.date.value)"></div>
-                    <div class="col-sm-5" data-bind="text: fields.text.value"></div>
-                    <div class="col-sm-5" data-bind="text: fields.categoryName"></div>
-                    
-                
-        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Date</th><th>Text</th><th>Category</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr data-bind="foreach: items">
+                    <td><span data-bind="text: moment(fields.date.value)"></span></td>
+                    <td><span data-bind="text: fields.text.value"></span></td>
+                    <td><span data-bind="text: fields.categoryName"></span></td>
+                </tr>
+            </tbody>
+
+
+        </table>       
         
     </body>
 </html>
