@@ -1,6 +1,10 @@
 "use strict";
 const api_key = "b76d77635da6f609d5e8e84c1bca496470889617492391c87f75afc283e97ad4";
 
+
+var loginState = new LoginState();
+var dataModel = new DataAccess();
+
 window.addEventListener('cloudkitloaded', function() {
 
     CloudKit.configure({
@@ -19,109 +23,129 @@ window.addEventListener('cloudkitloaded', function() {
             environment: 'development'
         }]
     });
-    console.log("Cloudkit configured");
-    
-    function FoodWebModel() {
-        var self = this;
-        console.log("get containers");
-        let container = CloudKit.getDefaultContainer();
-        let database = container.privateCloudDatabase;
-        self.categories = [];
-        self.items = [];
-        container.setUpAuth().then(function(userInfo) {
-            console.log("setUpAuth");
-            if(userInfo) {
-                self.gotoAuthenticatedState(userInfo);
-                
-               } else {
-                self.gotoUnauthenticatedState();
-               }        
-        })
-        self.gotoAuthenticatedState = function(userInfo) {
-            document.getElementById("ForLoggedIn").style.display = "block";
-
-
-            container.whenUserSignsOut().then(self.gotoUnauthenticatedState);
-        };
-        
-        self.gotoUnauthenticatedState = function(error) {
-            document.getElementById("ForLoggedIn").style.display = "none";
-            container
-            .whenUserSignsIn()
-            .then(self.gotoAuthenticatedState)
-            .catch(self.gotoUnauthenticatedState);
-          };
-    }
-        
-        
-     
-})
-
-class DataAccess {
-    async fetchCategories() {
-        
-        
-            var query = {recordType: 'Category'}; // sortBy: [{fieldName: '???'}]
-            let response =  await database.performQuery(query);
-            
-            if (response.hasErrors) {
-                console.error(response.errors[0]);
-                return;
-            }
-            var records = response.records;
-            console.log(records);
-            var numberOfRecords = records.length;
-            if (numberOfRecords === 0) {
-                console.error("No matching items");
-                return;
-            }
-            this.categoryList = records;
-            return records;
-    }
-
-    get categories() {
-        return this.categoryList;
-    } 
-
-    async fetchItems() {
-        let container = CloudKit.getDefaultContainer();
-        let database = container.privateCloudDatabase;
-        console.log("fetching items from " + database);
-        var query = {recordType: 'LogItem'}; // sortBy: [{fieldName: '???'}]
-        let response = await database.performQuery(query);
-        
-        if (response.hasErrors) {
-            console.error(response.errors[0]);
-            return;
-        }
-        var records = response.records;
-        
-        var numberOfRecords = records.length;
-        if (numberOfRecords === 0) {
-            console.error("No matching items");
-            return;
-        }
-        records.forEach(function(element) {
-            console.log(element)
-            if (element.fields.category) {
-                element.fields.categoryName = this.getCategoryName(element.fields.category.value.recordName);
-            }
-        });
-        this.items = records;
-        
-      
-    }
-
-    self.getCategoryName = function(recordName) {
-        if (self.categoriesReference)
+    console.log("Cloudkit configured");                     
+    loginState.setUpAuth().then(function(r){
+        if (r)
         {
-            var cat = self.categoriesReference.find(function(element) {
-                return element.recordName === recordName;
+            dataModel.fetchCategories().then(function(c){
+                //x.fields.name.value
+                //x.recordName
+                let l = document.getElementById("categoryList");
+                for (var i = 0 ; i < c.length ; ++i) {
+                    let span = document.createElement("div");
+                    let cb = document.createElement("input");
+                    cb.type = "checkbox";
+                    cb.name = "categoryCB";
+                    cb.id = c[i].recordName;
+                    cb.value=c[i].recordName;
+
+                    let label = document.createElement("label");
+                    label.htmlFor = c[i].recordName;
+                    label.appendChild(document.createTextNode(c[i].fields.name.value));
+
+                    span.appendChild(cb);
+                    span.appendChild(label);
+                    l.appendChild(span);
+                }                                
             });
-            if (cat) {
-                return cat.fields.name.value;
-            }
-            return "N/A";
         }
+    });
+})
+function prepareDataTable(data) {
+
+    let dataArray = [];
+    let columns = [];
+
+    if (document.getElementById("timeSlots").checked) {
+        const start = parseInt(document.getElementById("slotstart").value) // 6 ?
+        const end = parseInt(document.getElementById("slotend").value) // 21
+        const slen =  parseInt(document.getElementById("slotLength").value)
+        const numCols = (end - start)/slen + 1;
+        
+        let currentSlotStart = start;
+        let currentSlotEnd = start + slen;
+        columns.push({ title: "Date"});
+        for (var i = 1 ; i < numCols ; ++i) {
+            columns.push({ title: "" + currentSlotStart + " - " + currentSlotEnd});
+            currentSlotStart += slen;
+            currentSlotEnd += slen;
+        }
+        for (var i = 0 ; i < data.length ; ++i)
+        {
+            let item = data[i];
+            let date = new Date(item[0]);            
+            let hour = date.getHours();
+            
+            date.setHours(0,0,0,0); //clear time part
+            if (hour < start || hour > end) {
+                continue;
+            }
+            let slotNum = (hour - start) / slen + 1; //+1 as 0 is date 
+            let existing_item = dataArray.find(function(element){ return element[0].toDateString() === date.toDateString(); });            
+            let dataItem = new Array(numCols);
+            dataItem.fill("", 0, numCols);
+            dataItem[0] = date;
+            if (existing_item) {
+                dataItem = existing_item;
+            }
+            if (!dataItem[slotNum]) {
+                dataItem[slotNum] = ""; //no "undefined"
+            }
+            else {
+                dataItem[slotNum] += ", ";
+            }
+            dataItem[slotNum] += item[2];
+            if (!existing_item) {
+                dataArray.push(dataItem);
+            }
+        }
+
+        return {
+            data: dataArray,
+            columns:columns,
+            buttons: [
+                { orientation: 'landscape', pageSize: 'LEGAL', extend: 'pdfHtml5' }
+            ],
+            columnDefs: [{
+                targets: 0,
+                render: $.fn.dataTable.render.moment('YYYY-MM-DD')
+            }],
+            dom: 'Blfrtip'            
+       }
+
     }
+
+    return {
+            data: data,
+            columns: [
+                { title: 'Date'},
+                { title: 'Category'},
+                { title: 'Text'}
+
+            ],
+            buttons: [
+                { orientation: 'landscape', pageSize: 'LEGAL', extend: 'pdfHtml5' }
+            ],
+            columnDefs: [{
+                targets: 0,
+                render: $.fn.dataTable.render.moment('YYYY-MM-DD')
+            }],
+            dom: 'Blfrtip'
+       }
+}
+
+function fetchData() {
+    let fromDate = new Date( parseInt(document.getElementById("fromYear").value), parseInt(document.getElementById("fromMonth").value), parseInt(document.getElementById("fromDay").value) );
+    let toDate = new Date( parseInt(document.getElementById("toYear").value), parseInt(document.getElementById("toMonth").value), parseInt(document.getElementById("toDay").value) );
+    let categories = document.querySelectorAll("input[name=categoryCB]:checked");
+    let catids = [];
+    for (var i = 0 ; i < categories.length ; ++i){
+        catids.push(categories[i].value);
+    }
+    dataModel.fetchItems(fromDate, toDate, catids).then(function(data){
+        const dataWithConfig = prepareDataTable(data);
+        
+        let tb = $("#resulttable").DataTable(dataWithConfig);
+        tb.ajax.reload();
+    });
 }
