@@ -144,7 +144,8 @@ function fetchData() {
     }
     dataModel.fetchItems(fromDate, toDate, catids).then(function(data){
         const dataWithConfig = prepareDataTable(data);
-        
+        $("#tablecontainer").empty();
+        $("#tablecontainer").append($('<table id="resulttable" class="table table-striped table-bordered"></table>'))
         let tb = $("#resulttable").DataTable(dataWithConfig);
         tb.ajax.reload();
     });
