@@ -1,21 +1,23 @@
 <html>
     <head>
             <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" >
-            <script   src="https://code.jquery.com/jquery-3.4.1.slim.min.js"   integrity="sha256-pasqAKBDmFT4eHoN2ndd6lN370kFiGUFyTiUHWhU7k8="   crossorigin="anonymous"></script>
-            <script   src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"   integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="   crossorigin="anonymous"></script>
-    
-            <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4-4.1.1/jszip-2.5.0/dt-1.10.18/b-1.5.6/b-html5-1.5.6/b-print-1.5.6/datatables.min.css"/>
- 
+            <script
+			  src="https://code.jquery.com/jquery-3.4.1.min.js"
+			  integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+			  crossorigin="anonymous"></script>
+            <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4-4.1.1/jszip-2.5.0/dt-1.10.18/b-1.5.6/b-html5-1.5.6/b-print-1.5.6/datatables.min.css"/> 
             <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
             <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
-            <script type="text/javascript" src="https://cdn.datatables.net/v/bs4-4.1.1/jszip-2.5.0/dt-1.10.18/b-1.5.6/b-html5-1.5.6/b-print-1.5.6/datatables.js"></script>
-        <script src="https://cdn.datatables.net/plug-ins/1.10.19/dataRender/datetime.js"></script>
-        <script src="LoginState.js"></script>
-        <script src="DataAccess.js"></script>
-        <script src="FoodLog.js"></script>
-        <script src="https://cdn.apple-cloudkit.com/ck/2/cloudkit.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
-        
+            <script type="text/javascript" src="https://cdn.datatables.net/v/bs4-4.1.1/jszip-2.5.0/dt-1.10.18/b-1.5.6/b-html5-1.5.6/b-print-1.5.6/datatables.js"></script>     
+            <script src="https://cdn.datatables.net/plug-ins/1.10.19/dataRender/datetime.js"></script>             
+            <script src="https://cdn.apple-cloudkit.com/ck/2/cloudkit.js"></script>     
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>     
+            <script   src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"   integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="   crossorigin="anonymous"></script>
+    
+            <script src="LoginState.js"></script>     
+            <script src="DataAccess.js"></script>     
+            <script src="FoodLog.js"></script>
+          
     </head>
     <body>
        
@@ -26,14 +28,15 @@
             <div id="categoryList">
                 
             </div>
-                    
-            Add new entry: <br/>
-            <p>Text: <input type="text" id="text"></p>
-            <p>Date: <input type="text" class="datepicker" id="date"> </p>
             
-            Read saved entries: <br/>
-            <p>From: <input type="text" id="fromDay" value="1"><input type="text" id="fromMonth" value="1"><input type="text" id="fromYear" value="2019"></p>
-            <p>To: <input type="text" id="toDay" value="10"><input type="text" id="toMonth" value="10"><input type="text" id="toYear" value="2019"></p>
+            <p>Add new entry:</p>
+            <p>Text: <input type="text" id="text"></p>
+            <p>Date: <input type="text" class="datepicker" id="date"></p>
+            <button onclick="AddNewEntry();"></button>
+
+            <p>From:  <input type="text" id="from"></p>
+            <p>To: <input type="text" id="to" ></p>
+            
             <hr/>
             <input type="checkbox" id="timeSlots"><label for="timeSlots">Divide by timeslots</label>
             <div>timeslot length (in h)<input type="text" id="slotLength"> </div>

@@ -150,3 +150,15 @@ function fetchData() {
         tb.ajax.reload();
     });
 }
+
+$(function(){
+    $("#date").datepicker({
+        defaultDate: 0
+    });
+    $("#from").datepicker({
+        defaultDate: -7
+    });
+    $("#to").datepicker({
+        defaultDate: 0
+    });
+})
