@@ -13,18 +13,19 @@ class LoginState {
 
     
     }
-    gotoAuthenticatedState(userInfo) {
+    gotoAuthenticatedState (userInfo) {
         let container = CloudKit.getDefaultContainer();   
         document.getElementById("ForLoggedIn").style.display = "block";
         container.whenUserSignsOut().then(this.gotoUnauthenticatedState);
     };
     
     gotoUnauthenticatedState(error) {
+        let self = this;
         let container = CloudKit.getDefaultContainer();   
         document.getElementById("ForLoggedIn").style.display = "none";
         container
         .whenUserSignsIn()
-        .then(this.gotoAuthenticatedState)
-        .catch(this.gotoUnauthenticatedState);
+        .then(self.gotoAuthenticatedState)
+        .catch(self.gotoUnauthenticatedState);
       };
 }

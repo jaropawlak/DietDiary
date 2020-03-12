@@ -135,8 +135,8 @@ function prepareDataTable(data) {
 }
 
 function fetchData() {
-    let fromDate = new Date( parseInt(document.getElementById("fromYear").value), parseInt(document.getElementById("fromMonth").value), parseInt(document.getElementById("fromDay").value) );
-    let toDate = new Date( parseInt(document.getElementById("toYear").value), parseInt(document.getElementById("toMonth").value), parseInt(document.getElementById("toDay").value) );
+    let fromDate = new Date(document.getElementById("from").value);
+    let toDate = new Date( document.getElementById("to").value );
     let categories = document.querySelectorAll("input[name=categoryCB]:checked");
     let catids = [];
     for (var i = 0 ; i < categories.length ; ++i){
@@ -149,6 +149,17 @@ function fetchData() {
         let tb = $("#resulttable").DataTable(dataWithConfig);
         tb.ajax.reload();
     });
+}
+
+function addNewEntry() {
+    let text = document.getElementById("text").value;
+    let date = new Date( document.getElementById("date").value);
+    let categories = document.querySelectorAll("input[name=categoryCB]:checked");
+    let catids = [];
+    for (var i = 0 ; i < categories.length ; ++i){
+        catids.push(categories[i].value);
+    }
+    dataModel.addEntry(text, date, categories);
 }
 
 $(function(){
