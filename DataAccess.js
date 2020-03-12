@@ -87,15 +87,40 @@ class DataAccess {
      * 
      * @param {string} text 
      * @param {Date} date 
-     * @param {Array} categories 
+     * @param {string} categoriy 
      */
-    addEntry(text, date, categories) {
+    addEntry(text, date, category) {
         let container = CloudKit.getDefaultContainer();
         let database = container.privateCloudDatabase;
         var record = { recordType: "LogItem",
             fields: { 
                 date: { value: date.getTime() },
                 text: { value: text }
+                
+            }
+        };
+        if (category) {
+            record.fields.category = { value: { recordName: category } }
+        }
+        database.saveRecords(record).then(function(response) {
+            if (response.hasErrors) {
+                console.error(response.errors[0]);
+                alert(error);
+                return;
+            }
+        });
+    }
+
+    /**
+     * 
+     * @param {string} name 
+     */
+    addNewCategory(name) {
+        let container = CloudKit.getDefaultContainer();
+        let database = container.privateCloudDatabase;
+        var record = { recordType: "Category",
+            fields: {                
+                name: { value: name }                
             }
         };
         database.saveRecords(record).then(function(response) {

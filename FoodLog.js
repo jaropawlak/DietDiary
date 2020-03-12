@@ -155,13 +155,18 @@ function addNewEntry() {
     let text = document.getElementById("text").value;
     let date = new Date( document.getElementById("date").value);
     let categories = document.querySelectorAll("input[name=categoryCB]:checked");
-    let catids = [];
-    for (var i = 0 ; i < categories.length ; ++i){
-        catids.push(categories[i].value);
+    let catid = null;
+    categories.find ()
+    if (categories.length > 0) {
+        catid = categories[0].value;       
     }
-    dataModel.addEntry(text, date, categories);
+    dataModel.addEntry(text, date, catid);
 }
 
+function addNewCategory() {
+    let name = document.getElementById("newCategoryName").value;
+    dataModel.addNewCategory(name);
+}
 $(function(){
     $("#date").datepicker({
         defaultDate: 0

@@ -28,12 +28,20 @@
             <div id="categoryList">
                 
             </div>
-            
-            <p>Add new entry:</p>
+            <fieldset>
+                <legend> <p>Add new entry:</p></legend>
+           
+           
             <p>Text: <input type="text" id="text"></p>
             <p>Date: <input type="text" class="datepicker" id="date"></p>
             <button onclick="addNewEntry();">Save</button>
+            </fieldset>
 
+            <fieldset><legend>Add new category</legend>
+                <p>Name: <input type="text" id="newCategoryName"></p>                
+                <button onclick="addNewCategory();">Save</button>
+            </fieldset>
+            
             <p>From:  <input type="text" id="from"></p>
             <p>To: <input type="text" id="to" ></p>
             
