@@ -3,6 +3,8 @@ class LoginState {
         console.log("get containers");
         let container = CloudKit.getDefaultContainer();      
         let userInfo = await container.setUpAuth();
+        container.whenUserSignsOut().then(this.gotoUnauthenticatedState);
+        container.whenUserSignsIn().then(this.gotoAuthenticatedState).catch(this.gotoUnauthenticatedState);
         if(userInfo) {
             this.gotoAuthenticatedState(userInfo);       
             return true;     
@@ -14,18 +16,12 @@ class LoginState {
     
     }
     gotoAuthenticatedState (userInfo) {
-        let container = CloudKit.getDefaultContainer();   
         document.getElementById("ForLoggedIn").style.display = "block";
-        container.whenUserSignsOut().then(this.gotoUnauthenticatedState);
+        document.getElementById("login-info").style.display = "none";
     };
     
     gotoUnauthenticatedState(error) {
-        let self = this;
-        let container = CloudKit.getDefaultContainer();   
         document.getElementById("ForLoggedIn").style.display = "none";
-        container
-        .whenUserSignsIn()
-        .then(self.gotoAuthenticatedState)
-        .catch(self.gotoUnauthenticatedState);
+        document.getElementById("login-info").style.display = "block";
       };
 }

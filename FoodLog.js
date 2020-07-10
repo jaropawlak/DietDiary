@@ -27,30 +27,48 @@ window.addEventListener('cloudkitloaded', function() {
     loginState.setUpAuth().then(function(r){
         if (r)
         {
-            dataModel.fetchCategories().then(function(c){
-                //x.fields.name.value
-                //x.recordName
-                let l = document.getElementById("categoryList");
-                for (var i = 0 ; i < c.length ; ++i) {
-                    let span = document.createElement("div");
-                    let cb = document.createElement("input");
-                    cb.type = "checkbox";
-                    cb.name = "categoryCB";
-                    cb.id = c[i].recordName;
-                    cb.value=c[i].recordName;
-
-                    let label = document.createElement("label");
-                    label.htmlFor = c[i].recordName;
-                    label.appendChild(document.createTextNode(c[i].fields.name.value));
-
-                    span.appendChild(cb);
-                    span.appendChild(label);
-                    l.appendChild(span);
-                }                                
-            });
+            loadCategories();
         }
     });
 })
+
+function createOptionElement(recordName, textValue){
+    let span = document.createElement("div");
+    let cb = document.createElement("input");
+    cb.type = "checkbox";
+    cb.name = "categoryCB";
+    cb.id = recordName;
+    cb.value=recordName;
+
+    let label = document.createElement("label");
+    label.htmlFor = recordName;
+    label.appendChild(document.createTextNode(textValue));
+
+    span.appendChild(cb);
+    span.appendChild(label);
+    return span;
+}
+function loadCategories() {
+    dataModel.fetchCategories().then(function(c){
+        //x.fields.name.value
+        //x.recordName
+        let l = document.getElementById("categoryList");
+        let l2 = document.getElementById("categoryList2");
+        let s = document.getElementById("categoryToAdd");
+        s.innerHTML = '';
+        l.innerHTML = '';
+        l2.innerHTML = '';
+        for (var i = 0 ; i < c.length ; ++i) {
+            
+            l.appendChild(createOptionElement(c[i].recordName, c[i].fields.name.value));
+            l2.appendChild(createOptionElement(c[i].recordName, c[i].fields.name.value));
+            var opt = document.createElement('option');
+            opt.appendChild( document.createTextNode(c[i].fields.name.value) );
+            opt.value = c[i].recordName; 
+            s.appendChild(opt); 
+        }                                
+    });
+}
 function prepareDataTable(data) {
 
     let dataArray = [];
@@ -99,8 +117,9 @@ function prepareDataTable(data) {
                 dataArray.push(dataItem);
             }
         }
-
+        console.log(dataArray);
         return {
+            ajax: null,
             data: dataArray,
             columns:columns,
             buttons: [
@@ -114,11 +133,11 @@ function prepareDataTable(data) {
        }
 
     }
-
+    console.log(data);
     return {
             data: data,
             columns: [
-                { title: 'Date'},
+                { title: 'Date', type: "date"},
                 { title: 'Category'},
                 { title: 'Text'}
 
@@ -128,6 +147,7 @@ function prepareDataTable(data) {
             ],
             columnDefs: [{
                 targets: 0,
+                type: "date",
                 render: $.fn.dataTable.render.moment('YYYY-MM-DD')
             }],
             dom: 'Blfrtip'
@@ -135,8 +155,8 @@ function prepareDataTable(data) {
 }
 
 function fetchData() {
-    let fromDate = new Date(document.getElementById("from").value);
-    let toDate = new Date( document.getElementById("to").value );
+    let fromDate = new Date(document.getElementById("from").value).getTime();
+    let toDate = new Date( document.getElementById("to").value ).getTime();
     let categories = document.querySelectorAll("input[name=categoryCB]:checked");
     let catids = [];
     for (var i = 0 ; i < categories.length ; ++i){
@@ -147,34 +167,69 @@ function fetchData() {
         $("#tablecontainer").empty();
         $("#tablecontainer").append($('<table id="resulttable" class="table table-striped table-bordered"></table>'))
         let tb = $("#resulttable").DataTable(dataWithConfig);
-        tb.ajax.reload();
+        
     });
 }
 
 function addNewEntry() {
     let text = document.getElementById("text").value;
     let date = new Date( document.getElementById("date").value);
-    let categories = document.querySelectorAll("input[name=categoryCB]:checked");
-    let catid = null;
-    categories.find ()
-    if (categories.length > 0) {
-        catid = categories[0].value;       
-    }
-    dataModel.addEntry(text, date, catid);
+    
+    var catSelect = document.getElementById("categoryToAdd");
+    let category = e.options[e.selectedIndex].value;
+    dataModel.addEntry(text, date, category);
 }
 
-function addNewCategory() {
+async function addNewCategory() {
     let name = document.getElementById("newCategoryName").value;
-    dataModel.addNewCategory(name);
+    let res = await dataModel.addNewCategory(name);
+    if (res == null) {
+        alert('Category added');
+        loadCategories();
+    }
 }
+async function deleteCategory() {
+    let arr = [];
+    $("#categoryList input:checked").each(function(){
+        arr.push($(this).val());
+    });
+    for (const a in arr) {
+        await dataModel.removeCategory(arr[a]);
+    }
+    loadCategories();
+    
+}
+
+function openTab(evt, tabName) {
+    // Declare all variables
+    var i, tabcontent, tablinks;
+  
+    // Get all elements with class="tabcontent" and hide them
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+      tabcontent[i].style.display = "none";
+    }
+  
+    // Get all elements with class="tablinks" and remove the class "active"
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+      tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+  
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById(tabName).style.display = "block";
+    evt.currentTarget.className += " active";
+  }
+  
+
 $(function(){
-    $("#date").datepicker({
-        defaultDate: 0
+    $("#date").datetimepicker({
+        //defaultDate: 0
     });
-    $("#from").datepicker({
-        defaultDate: -7
+    $("#from").datetimepicker({
+        //defaultDate: -7
     });
-    $("#to").datepicker({
-        defaultDate: 0
+    $("#to").datetimepicker({
+       // defaultDate: 0
     });
 })

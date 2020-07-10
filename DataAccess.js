@@ -35,14 +35,35 @@ class DataAccess {
             if (cat) {
                 return cat.fields.name.value;
             }
-            return "N/A";
         }
+        return "N/A";
     }
+    /**
+     * 
+     * @param {int} dateFrom in miliseconds 
+     * @param {int} dateTo in miliseconds 
+     * @param {[string]} selectedCategories ids of categories 
+     */
     async fetchItems(dateFrom, dateTo, selectedCategories) {
+        let filters = [];
+        if (dateFrom) {
+            filters.push({
+                comparator: 'GREATER_THAN_OR_EQUALS',
+                fieldName: 'date',
+                fieldValue: { value: dateFrom }
+            })
+        }
+        if (dateTo) {
+            filters.push({
+                comparator: 'LESS_THAN_OR_EQUALS',
+                fieldName: 'date',
+                fieldValue: { value: dateTo }
+            })
+        }
         let container = CloudKit.getDefaultContainer();
         let database = container.privateCloudDatabase;
         console.log("fetching items from " + database);
-        var query = {recordType: 'LogItem'}; // sortBy: [{fieldName: '???'}]
+        var query = {recordType: 'LogItem', filterBy: filters}; // sortBy: [{fieldName: '???'}]
         let response = await database.performQuery(query);
         
         if (response.hasErrors) {
@@ -71,10 +92,12 @@ class DataAccess {
             //console.log(element)
             if (element.fields.category) {
                 element.fields.categoryName = gn(element.fields.category.value.recordName, cats);
+            } else {
+                element.fields.categoryName = "N/A";
             }
            
             outputItems.push([
-                element.fields.date.value,                
+                new Date( element.fields.date.value),                
                 element.fields.categoryName,
                 element.fields.text.value
             ]);
@@ -115,7 +138,7 @@ class DataAccess {
      * 
      * @param {string} name 
      */
-    addNewCategory(name) {
+    async addNewCategory(name) {
         let container = CloudKit.getDefaultContainer();
         let database = container.privateCloudDatabase;
         var record = { recordType: "Category",
@@ -123,14 +146,28 @@ class DataAccess {
                 name: { value: name }                
             }
         };
-        database.saveRecords(record).then(function(response) {
-            if (response.hasErrors) {
-                console.error(response.errors[0]);
-                alert(error);
-                return;
-            }
-        });
+        let response = await database.saveRecords(record);
+        if (response.hasErrors) {
+            let error = console.error(response.errors[0]);
+            alert(error);
+            return error;
+        }
+        return null;
     }
 
+    async removeCategory(id) {
+        let container = CloudKit.getDefaultContainer();
+        let database = container.privateCloudDatabase;
+        var record = { recordType: "Category",
+            recordName: id            
+        };
+        let response = await database.deleteRecords(record);
+        if (response.hasErrors) {
+            let error = console.error(response.errors[0]);
+            alert(error);
+            return error;
+        }
+        return null;
+    }
     
 }
