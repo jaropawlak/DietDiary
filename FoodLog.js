@@ -223,13 +223,21 @@ function openTab(evt, tabName) {
   
 
 $(function(){
-    $("#date").datetimepicker({
-        //defaultDate: 0
-    });
-    $("#from").datetimepicker({
-        //defaultDate: -7
-    });
-    $("#to").datetimepicker({
-       // defaultDate: 0
-    });
+    const config = {
+        enableTime: true,
+        dateFormat: "Y-m-d H:i",
+        time_24hr: true
+    }
+    flatpickr("#date", config);
+    flatpickr("#from", config);
+    flatpickr("#to", config);
+    // $("#date").datetimepicker({
+    //     //defaultDate: 0
+    // });
+    // $("#from").datetimepicker({
+    //     //defaultDate: -7
+    // });
+    // $("#to").datetimepicker({
+    //    // defaultDate: 0
+    // });
 })

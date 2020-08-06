@@ -1,5 +1,6 @@
 <html>
     <head>
+        <meta name="viewport" content="width=800" />
         <title>Diet diary</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
             <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" >
@@ -16,8 +17,8 @@
             <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>     
             <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"   integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="   crossorigin="anonymous"></script>
             
-            
-
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+            <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
             <script src="LoginState.js"></script>     
             <script src="DataAccess.js"></script>     
@@ -40,7 +41,7 @@
             </div>    
             <div  id="ForLoggedIn" style="display:none">
 
-                <div class="tab">
+                <div class="tab" id="tabbar">
                     <button class="tablinks active" onclick="openTab(event, 'NewEvent')">Add new event</button>
                     <button class="tablinks" onclick="openTab(event, 'Category')">Manage your categories</button>
                     <button class="tablinks" onclick="openTab(event, 'Logbook')">Reports</button>
@@ -54,29 +55,29 @@
                 Delete selected categories <button onclick="if (confirm('are you sure you want to delete categories?')) {deleteCategory();}"> Do it! </button>
                     </fieldset>                   
                     <fieldset><legend>Add new category</legend>
-                        <p>Name: <input type="text" id="newCategoryName"></p>                
+                        <p><label>Name: </label><input type="text" id="newCategoryName"></p>                
                         <button onclick="addNewCategory();">Save</button>
                     </fieldset>
             </div>
 
             <div id="NewEvent" class="tabcontent" style="display:block">
                 <h3>New entry</h3>
-                <p>Text: <input type="text" id="text"></p>
-                <p>Date: <input type="text"  id="date"></p>
-                <p>Category: <select id="categoryToAdd"></select></p>
+                <p><label>Text:</label> <input type="text" id="text"></p>
+                <p><label>Date:</label> <input type="text"  id="date"></p>
+                <p><label>Category:</label> <select id="categoryToAdd"></select></p>
                 <button onclick="addNewEntry();">Save</button>
                 
             </div>
         
         <div id="Logbook" class="tabcontent">
             <div class="cols-10">
-                <p>From:  <input type="text" id="from"></p>
-                <p>To: <input type="text" id="to" ></p>
-                <p>Categories: <div id="categoryList2"></div></p>
-                <input type="checkbox" id="timeSlots"><label for="timeSlots">Divide by timeslots</label>
-                <div>timeslot length (in h)<input type="text" id="slotLength"> </div>
-                <div>timeslots start at <input type="text" id="slotstart"></div>
-                <div>timeslots end at <input type="text" id="slotend"></div>
+                <div><label>From: </label> <input type="text" id="from"></div>
+                <div><label>To: </label> <input type="text" id="to" ></div>
+                <div><label>Categories: </label> <div id="categoryList2"></div></div>
+                <input type="checkbox" id="timeSlots"> <label for="timeSlots">Divide by timeslots</label>
+                <div><label>timeslot length (in h)</label> <input type="text" id="slotLength"> </div>
+                <div><label>timeslots start at</label> <input type="text" id="slotstart"></div>
+                <div><label>timeslots end at </label> <input type="text" id="slotend"></div>
     
                 <button onclick="fetchData();">Fetch data</button>
             </div> 
